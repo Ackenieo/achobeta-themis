@@ -288,60 +288,7 @@ public class FileServiceImpl implements IFileService {
 
             document.setMargins(20, 20, 20, 20); // 上、右、下、左
 
-            // 优先尝试加载中文字体：classpath -> Windows 字体目录 -> 回退
             PdfFont chineseFont = null;
-//            try {
-//                byte[] fontBytes = null;
-//                boolean fontCreatedDirectly = false;
-//                if (fontBytes == null) {
-//                    for (String sysPath : SYSTEM_FONTS) {
-//                        Path p = Paths.get(sysPath);
-//                        if (Files.exists(p)) {
-//                            // 如果是 TTC 集合，直接使用路径并指定索引（例如 ,0）
-//                            if (sysPath.toLowerCase().endsWith(".ttc")) {
-//                                try {
-//                                    chineseFont = PdfFontFactory.createFont(sysPath + ",0", PdfEncodings.IDENTITY_H, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
-//                                    fontCreatedDirectly = true;
-//                                    break;
-//                                } catch (IOException ignored) {
-//                                    // 若直接用路径失败，继续尝试读取字节或下一个候选
-//                                    log.warn("字体目录加载字体 {} 失败", sysPath);
-//                                }
-//                            }
-//                            try {
-//                                fontBytes = Files.readAllBytes(p);
-//                                break;
-//                            } catch (IOException ignored) {
-//                                // 继续尝试下一个
-//                                log.warn("字体目录加载字体 {} 失败", sysPath);
-//                            }
-//                        }
-//                    }
-//                }
-//
-//                // 3) 若已通过路径创建字体（如 TTC），跳过字节创建；否则若找到字节数组，用字节数组创建字体；否则尝试使用原始 CHINESE_FONT_PATH（资源 id），若仍失败回退到内置字体
-//                if (!fontCreatedDirectly) {
-//                    if (fontBytes != null) {
-//                        chineseFont = PdfFontFactory.createFont(fontBytes, PdfEncodings.IDENTITY_H, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
-//                    } else {
-//                        try {
-//                            chineseFont = PdfFontFactory.createFont("com/itextpdf/fonts/asian/simsun.ttc,1", PdfEncodings.IDENTITY_H, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
-//                        } catch (IOException ioe) {
-//                            log.warn("警告：中文字体加载失败，使用内置字体替代。错误：{}", ioe.getMessage());
-//                            chineseFont = PdfFontFactory.createFont();
-//                        }
-//                    }
-//                }
-//            } catch (IOException ioe) {
-//                log.warn("警告：读取字体时出现异常，使用内置字体替代。错误：{}", ioe.getMessage());
-//                try {
-//                    chineseFont = PdfFontFactory.createFont();
-//                } catch (IOException e2) {
-//                    // 极端情况：连内置字体也无法创建，打印并抛出运行时异常
-//                    log.error("致命：无法创建任何字体：{}", e2.getMessage());
-//                    throw new RuntimeException(e2);
-//                }
-//            }
 
             // 保证 chineseFont 已初始化（防止编译器因不可确定赋值报错）
             // 使用classpath找到字体文件
@@ -359,6 +306,34 @@ public class FileServiceImpl implements IFileService {
                 log.error("致命：无法创建默认字体");
                 throw new RuntimeException("无法创建默认字体");
             }
+
+
+//            String resourceFontPath = "fronts/simsun.ttc";
+//
+//            PdfFont chineseFont = null;
+//            try (InputStream fontInputStream = Constant.class.getClassLoader().getResourceAsStream(resourceFontPath)) {
+//                if (fontInputStream == null) {
+//                    log.error("致命：无法找到默认字体文件（路径：{}）", resourceFontPath);
+//                    throw new RuntimeException("无法找到默认字体文件");
+//                }
+//
+//                byte[] fontBytes = fontInputStream.readAllBytes();
+//                // 从输入流创建字体（指定TTC索引0、编码、嵌入策略）
+//                chineseFont = PdfFontFactory.createFont(
+//                        fontBytes,
+//                        PdfEncodings.IDENTITY_H
+//                );
+//
+//                if (chineseFont == null) {
+//                    log.error("致命：无法创建默认字体");
+//                    throw new RuntimeException("无法创建默认字体");
+//                }
+//                log.info("成功加载宋体字体（simsun.ttc）");
+//
+//            } catch (Exception e) {  // 捕获IO/字体创建异常
+//                log.error("致命：加载字体失败", e);
+//                throw new RuntimeException("加载字体失败", e);
+//            }
 
             // 处理文本内容：按换行符分割，逐行添加到 PDF（保持原格式）
             String[] contentLines = content.split("\n"); // 按 \n 分割每行文本

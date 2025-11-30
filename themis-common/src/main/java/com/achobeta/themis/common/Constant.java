@@ -30,7 +30,7 @@ public class Constant {
             "C:\\Windows\\Fonts\\msyh.ttf",
             "C:\\Windows\\Fonts\\simhei.ttf"
     };
- //   public static final String SYSTEM_LOCAL_PATH = "D:" + File.separator + "A" + File.separator + "ruku" + File.separator + "upload";
+  //  public static final String SYSTEM_LOCAL_PATH = "D:" + File.separator + "A" + File.separator + "ruku" + File.separator + "upload";
 
 
     public static final String SYSTEM_LOCAL_PATH = "/data/ruku/upload";  // Linux本地存储路径
