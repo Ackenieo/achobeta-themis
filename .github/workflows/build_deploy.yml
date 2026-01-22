@@ -1,0 +1,80 @@
+name: push to ACR and deploy to server
+
+on:
+#  push:
+  workflow_dispatch:
+
+env:
+  REGION_ID: cn-guangzhou
+  REGISTRY: crpi-5tzwiznwaw34lfca.cn-guangzhou.personal.cr.aliyuncs.com
+  NAMESPACE: aseubel
+  IMAGE: themis
+  TAG: latest  # ${{ github.sha }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 设置 Java 环境
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: /home/runner/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build with Maven
+        run: mvn verify -DskipTests
+
+      # 用户登录
+      - name: Login to ACR with the AccessKey pair
+        uses: aliyun/acr-login@v1
+        with:
+          region-id: "${{ env.REGION_ID }}"
+          access-key-id: "${{ secrets.ALIYUN_ACCESS_KEY_ID }}"
+          access-key-secret: "${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}"
+
+      # 登录阿里云 Container Registry
+      - name: login to aliyun container registry
+        run: docker login --username="${{ secrets.ALIYUN_USERNAME }}" --password="${{ secrets.ALIYUN_PASSWORD }}"  "$REGISTRY/$NAMESPACE/$IMAGE:$TAG"
+
+      # 构建镜像并推送到阿里云 Container Registry
+      - name: Build and push image to ACR
+        run: |
+          cd ./themis-app
+          echo "Building Docker image..."
+          docker build --tag "$REGISTRY/$NAMESPACE/$IMAGE:$TAG" .
+          echo "Pushing Docker image to ACR..."
+          docker push "$REGISTRY/$NAMESPACE/$IMAGE:$TAG"
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      # 拉取仓库代码
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 登录服务器并执行部署命令
+      - name: SSH & Deploy
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            set -e
+            cd /themis
+            sh build.sh new
+            echo "✅ Deploy finished at $(date)"

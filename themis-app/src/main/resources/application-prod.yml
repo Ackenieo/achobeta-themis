@@ -1,0 +1,110 @@
+server:
+  port: 611
+  tomcat:
+    threads:
+      max: 200        # 设定处理客户请求的线程的最大数目，决定了服务器可以同时响应客户请求的数,默认200
+      min-spare: 50   # 初始化线程数,最小空闲线程数,默认是10
+    accept-count: 10  # 等待队列长度
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://mysql:3306/themis?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true
+    username: root
+    password: 123456
+    hikari:
+      pool-name: Retail_HikariCP
+      minimum-idle: 20 #最小空闲连接数量
+      idle-timeout: 180000 #空闲连接存活最大时间，默认600000（10分钟）
+      maximum-pool-size: 50 #连接池最大连接数，默认是10
+      auto-commit: true  #此属性控制从池返回的连接的默认自动提交行为,默认值：true
+      max-lifetime: 1800000 #此属性控制池中连接的最长生命周期，值0表示无限生命周期，默认1800000即30分钟
+      connection-timeout: 30000 #数据库连接超时时间,默认30秒，即30000
+      connection-test-query: SELECT 1
+    type: com.zaxxer.hikari.HikariDataSource
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 2MB
+      max-request-size: 10MB
+
+# MyBatis 配置
+mybatis:
+  mapper-locations: classpath:/mybatis/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+#  config-location:  classpath:/mybatis/config/mybatis-config.xml
+
+## MyBatis-Plus 配置
+mybatis-plus:
+  mapper-locations: classpath:/mybatis/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+  type-handlers-package: com.achobeta.themis.domain.user.handler
+
+# 线程池配置
+thread:
+  pool:
+    executor:
+      config:
+        core-pool-size: 10
+        max-pool-size: 200
+        keep-alive-time: 10
+        block-queue-size: 5000
+        policy: CallerRunsPolicy
+
+#Redis 配置
+redis:
+  key-prefix: "achobeta-themis:"
+  time-to-live: 86400000 # 1天 (毫秒)
+  sdk:
+    config:
+      host: redis
+      port: 6379
+      pool-size: 10
+      min-idle-size: 5
+      idle-timeout: 30000
+      connect-timeout: 5000
+      retry-attempts: 3
+      retry-interval: 1000
+      ping-interval: 60000
+      keep-alive: true
+      password: ${REDIS_PASSWORD}
+
+# JWT配置
+jwt:
+  secret: 4ligUANwjrxTBFxYesepp/sd32D5S4Igz7FwNDmfItPgNu8aCxnrCVe5LZebisL6J3jtGLMZF+aGDnM6vjPLFA==
+  access-token-expiration: 1800000 # 30分钟 (毫秒)
+  refresh-token-expiration: 604800000 # 7天 (毫秒)
+
+# 阿里云短信配置
+aliyun:
+  sms:
+    access-key-id: ${aliyun-access-key-id}
+    access-key-secret: ${aliyun-access-key-secret}
+    template-code: ${aliyun-template-code}
+    sign-name: ${aliyun-sign-name}
+
+# 日志
+logging:
+  level:
+    root: info
+  config: classpath:logback-spring.xml
+
+# Langchain4j 配置
+langchain4j:
+  open-ai:
+    chat-model:
+      base-url: ${CHAT_BASE_URL}
+      api-key: ${OPENAI_API_KEY}
+      model: ${CHAT_MODEL}
+
+# MeiliSearch 配置
+meilisearch:
+  host: http://localhost:7700
+  api-key: ${MEILISEARCH_API_KEY}
+
+# Tavily 搜索配置
+tavily:
+  api-key: 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  # 请替换为你的 Tavily API Key
+  api-url: https://api.tavily.com/search

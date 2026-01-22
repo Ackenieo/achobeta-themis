@@ -1,0 +1,5 @@
+spring:
+  config:
+    name: themis-app
+  profiles:
+    active: dev
