@@ -3,11 +3,12 @@ package com.achobeta.themis.config;
 import com.achobeta.themis.common.agent.service.IAiAdjudicatorService;
 import com.achobeta.themis.common.agent.service.IAiKnowledgeService;
 import com.achobeta.themis.common.agent.tool.MeilisearchTool;
-import com.achobeta.themis.common.agent.tool.TavilyTool;
+//import com.achobeta.themis.common.agent.tool.TavilyTool;
 import com.achobeta.themis.common.agent.service.IAiChatService;
 import com.achobeta.themis.infrastructure.chat.redis.RedisChatMemoryStore;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.data.message.SystemMessage;
@@ -31,8 +32,8 @@ public class AgentConfig {
     private RedisChatMemoryStore redisChatMemoryStore;
     @Autowired
     private MeilisearchTool meilisearchTool;
-    @Autowired
-    private TavilyTool tavilyTool;
+//    @Autowired
+//    private TavilyTool tavilyTool;
 
 
 
@@ -68,7 +69,7 @@ public class AgentConfig {
                       }
                       return memory;
                 })
-                .tools(tavilyTool)  // 添加网络搜索工具，使 AI 具备联网能力
+                //.tools(tavilyTool)  // 添加网络搜索工具，使 AI 具备联网能力
                 .build();
     }
 
@@ -102,7 +103,7 @@ public class AgentConfig {
                     }
                     return memory;
                 })
-                .tools(tavilyTool)  // 添加网络搜索工具
+                //.tools(tavilyTool)  // 添加网络搜索工具
                 .build();
     }
     @Bean("adjudicator")
@@ -136,10 +137,8 @@ public class AgentConfig {
                     }
                     return memory;
                 })
-                .tools(meilisearchTool, tavilyTool)  // 同时支持知识库搜索和网络搜索
+                //.tools(meilisearchTool, tavilyTool)  // 同时支持知识库搜索和网络搜索
                 .build();
         }
-
-
 
 }
