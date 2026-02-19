@@ -9,9 +9,9 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://8.134.200.160:13306/themis?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true
+    url: jdbc:mysql://127.0.0.1:3306/themis?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true
     username: root
-    password: 123456
+    password: Chenkun123
     hikari:
       pool-name: Retail_HikariCP
       minimum-idle: 5 #最小空闲连接数量
@@ -71,6 +71,15 @@ redis:
       ping-interval: 60000
       keep-alive: true
 
+# Milvus 配置
+milvus:
+  host: 127.0.0.1
+  port: 19530
+  token: ""
+  connect-timeout: 5000
+  keep-alive-time: 60000
+  database-name: "default"
+
 # JWT配置
 jwt:
   secret: 4ligUANwjrxTBFxYesepp/sd32D5S4Igz7FwNDmfItPgNu8aCxnrCVe5LZebisL6J3jtGLMZF+aGDnM6vjPLFA==
@@ -86,7 +95,7 @@ aliyun:
 
 # MeiliSearch 配置
 meilisearch:
-  host: http://8.134.200.160:17700
+  host: http://127.0.0.1:7700
   api-key: ${MEILISEARCH_API_KEY}
 
 logging:
@@ -98,11 +107,17 @@ logging:
 langchain4j:
   open-ai:
     chat-model:
-      base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+     # base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+      base-url: http://127.0.0.1:11434/v1
       api-key: ${OPENAI_API_KEY}
-      model: qwen-plus
+      model: deepseek-r1:1.5b
+     # model: qwen-plus
+    embedding-model:
+      base-url: http://127.0.0.1:11434/v1
+      api-key: ${OPENAI_API_KEY}
+      model: qllama/bge-large-zh-v1.5:latest
 
-# Tavily 搜索配置
-tavily:
-  api-key: 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  # 请替换为你的 Tavily API Key
-  api-url: https://api.tavily.com/search
+## Tavily 搜索配置
+#tavily:
+#  api-key: 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  # 请替换为你的 Tavily API Key
+#  api-url: https://api.tavily.com/search
