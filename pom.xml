@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.achobeta</groupId>
-    <artifactId>achobeta-themis</artifactId>
+    <artifactId>pj1</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>achobeta-themis</name>
-    <description>achobeta-themis</description>
+    <name>pj1</name>
+    <description>pj1</description>
 
     <modules>
         <module>themis-api</module>

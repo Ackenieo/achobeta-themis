@@ -7,9 +7,7 @@ import com.achobeta.themis.common.exception.BusinessException;
 import com.achobeta.themis.common.util.SecurityUtils;
 import com.achobeta.themis.domain.chat.model.entity.ConversationMeta;
 import com.achobeta.themis.api.chat.request.ChatRequestVO;
-import com.achobeta.themis.domain.user.model.vo.QuestionTitleResponseVO;
 import com.achobeta.themis.domain.review.service.IAdjudicatorService;
-import com.achobeta.themis.domain.chat.service.IChatService;
 import com.achobeta.themis.domain.chat.service.IConversationHistoryService;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
@@ -46,8 +44,6 @@ public class ChatController {
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     private final IAdjudicatorService adjudicatorService;
-
-    private final IChatService chatService;
 
     @Autowired
     private ChatMemoryStore chatMemoryStore;
@@ -238,22 +234,6 @@ public class ChatController {
         }
     }
 
-    /**
-     * 查询常问问题（二级标题）
-     * @return
-     */
-    @GetMapping("/secondary_question_titles/{userType}")
-    public ApiResponse<List<List<QuestionTitleResponseVO>>> searchQuestionTitles(@PathVariable("userType") @NotNull(message = "用户类型不能为空") Integer userType) {
-        try {
-            List<List<QuestionTitleResponseVO>> questionTitleDocuments = chatService.searchQuestionTitles(userType);
-            return ApiResponse.success(questionTitleDocuments);
-        } catch (BusinessException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("查询常问问题失败", e);
-            return ApiResponse.error(e.getMessage());
-        }
-    }
 
     @Data
     @AllArgsConstructor
